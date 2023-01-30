@@ -3,6 +3,7 @@ import javax.sound.midi.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 
 public class midi {
     JFrame mframe;
@@ -31,23 +32,56 @@ public class midi {
         butpan.setBackground(Color.red);
         butpan.setLayout(new BoxLayout(butpan,BoxLayout.Y_AXIS));
         butpan.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        JButton bstart = new JButton("start");
-        JButton bstop = new JButton("stop");
-        JButton tubut = new JButton("tempup");
-        JButton tdbut = new JButton("tempdown");
+        JButton bstart = new JButton("Start");
+        JButton bstop = new JButton("Stop");
+        JButton tubut = new JButton("TempUp");
+        JButton tdbut = new JButton("TempDown");
+        JButton bsave = new JButton("Save");
+        JButton bload = new JButton ("Load");
+        JButton bclear = new JButton("Clear");
+        JLabel space = new JLabel("     ");
+        JLabel space1 = new JLabel("     ");
+        JLabel space2 = new JLabel("     ");
         butpan.add(bstart);
         bstart.addActionListener(new bstart());
         Font sett = new Font("arial", Font.BOLD, 18);
         bstart.setFont(sett);
+        bstart.setForeground(Color.yellow);
+        bstart.setBackground(Color.black);
+        tubut.setMargin(new Insets(0,27,0,27));
         butpan.add(bstop);
+        butpan.add(space1);
         butpan.add(tubut);
         butpan.add(tdbut);
+        butpan.add(space);
+        butpan.add(bsave);
+        butpan.add(bload);
+        butpan.add(space2);
+        butpan.add(bclear);
         bstop.setFont(sett);
+        bstop.setForeground(Color.yellow);
+        bstop.setBackground(Color.black);
         tubut.setFont(sett);
+        tubut.setForeground(Color.yellow);
+        tubut.setBackground(Color.black);
         tdbut.setFont(sett);
+        tdbut.setForeground(Color.yellow);
+        tdbut.setBackground(Color.black);
+        bsave.setFont(sett);
+        bsave.setForeground(Color.yellow);
+        bsave.setBackground(Color.black);
+        bload.setFont(sett);
+        bload.setForeground(Color.yellow);
+        bload.setBackground(Color.black);
+        bclear.setFont(sett);
+        bclear.setForeground(Color.yellow);
+        bclear.setBackground(Color.black);
         bstop.addActionListener(new bstop());
         tubut.addActionListener(new tup());
         tdbut.addActionListener(new tdown());
+        bsave.addActionListener(new bsave());
+        bload.addActionListener(new bload());
+        bclear.addActionListener(new bclear());
         mframe.getContentPane().add(BorderLayout.EAST, butpan);
     
 //levo
@@ -173,4 +207,70 @@ public class midi {
                 player.setTempoFactor((float) (tf*0.97));
             }
         }
+
+//class bsave
+        public class bsave implements ActionListener {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fsave = new JFileChooser();
+                fsave.showSaveDialog(mframe);
+                save(fsave.getSelectedFile());
+            }
+
+            private void save (File file) {
+                try {
+                    BufferedWriter savf = new BufferedWriter( new FileWriter(file));
+                    int key = 0;
+                    for (Object i :chblist) {
+                        JCheckBox iter = (JCheckBox) i;
+                        if (iter.isSelected()) {
+                            savf.write(key+"/");
+                            System.out.println(key);
+                        }
+                        key++;
+                    }
+                    savf.close();
+                    }catch(Exception ex){
+                        ex.printStackTrace();
+                }
+            }
         }
+
+//class bload
+            public class bload implements ActionListener {
+                public void actionPerformed(ActionEvent e) {
+                    try{
+                    JFileChooser flod = new JFileChooser();
+                    flod.showOpenDialog(mframe);
+                    File setf = flod.getSelectedFile();
+                    FileReader rlod = new FileReader(setf);
+                    BufferedReader reader = new BufferedReader(rlod);
+                    String line ="";
+                    line = reader.readLine();
+                    System.out.println(line);
+                    reader.close();
+                    String [] arload = line.split("/");
+                    ArrayList<Integer> iarload = new ArrayList<Integer>();
+                    for (String i : arload) {
+                        int keyint = Integer.parseInt(i);
+                        iarload.add(keyint);
+                    }
+                    for (int i : iarload) {
+                        System.out.print(i);
+                        JCheckBox keyb = (JCheckBox) chblist.get(i);
+                        keyb.setSelected(true);
+                    }                   
+                    } catch(Exception ex) {}                    
+                } 
+                
+            }
+
+//class bclear
+            public class bclear implements ActionListener {
+                public void actionPerformed(ActionEvent e) {
+                    for (Object i : chblist) {
+                        JCheckBox key1 = (JCheckBox) i;
+                        key1.setSelected(false);
+                    }
+                }
+            }
+}        
