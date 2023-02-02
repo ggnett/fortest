@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.* ;
 
 public class midi {
     JFrame mframe;
@@ -13,6 +14,12 @@ public class midi {
     Sequencer player;
     Sequence seq;
     int bpm = 120;
+    BufferedReader reader;
+    PrintWriter writer;
+    Socket sock;
+    JTextField outtext;
+    JTextArea inptex;
+    
 
     public static void main (String[] args){
         midi tt = new midi();
@@ -39,9 +46,20 @@ public class midi {
         JButton bsave = new JButton("Save");
         JButton bload = new JButton ("Load");
         JButton bclear = new JButton("Clear");
+        JButton butoutp = new JButton("Send");
         JLabel space = new JLabel("     ");
         JLabel space1 = new JLabel("     ");
         JLabel space2 = new JLabel("     ");
+        JLabel space3 = new JLabel("     ");
+        inptex = new JTextArea(30,20);
+        JScrollPane inptext = new JScrollPane(inptex);
+        inptex.setLineWrap(true);
+        inptex.setWrapStyleWord(true);
+        inptex.setEditable(false);
+        inptext.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        inptext.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        outtext = new JTextField(20);
+        JLabel space4 = new JLabel("     ");
         butpan.add(bstart);
         bstart.addActionListener(new bstart());
         Font sett = new Font("arial", Font.BOLD, 18);
@@ -58,6 +76,11 @@ public class midi {
         butpan.add(bload);
         butpan.add(space2);
         butpan.add(bclear);
+        butpan.add(space3);
+        butpan.add(butoutp);
+        butpan.add(outtext);
+        butpan.add(space4);
+        butpan.add(inptext);
         bstop.setFont(sett);
         bstop.setForeground(Color.yellow);
         bstop.setBackground(Color.black);
@@ -76,20 +99,25 @@ public class midi {
         bclear.setFont(sett);
         bclear.setForeground(Color.yellow);
         bclear.setBackground(Color.black);
+        butoutp.setFont(sett);
+        butoutp.setForeground(Color.yellow);
+        butoutp.setBackground(Color.black);
         bstop.addActionListener(new bstop());
         tubut.addActionListener(new tup());
         tdbut.addActionListener(new tdown());
         bsave.addActionListener(new bsave());
         bload.addActionListener(new bload());
+        butoutp.addActionListener(new butout());
         bclear.addActionListener(new bclear());
         mframe.getContentPane().add(BorderLayout.EAST, butpan);
+        
     
 //levo
         JPanel namepan = new JPanel();
         namepan.setLayout(new BoxLayout(namepan, BoxLayout.Y_AXIS));
         namepan.setBackground(Color.green);
         mframe.getContentPane().add(BorderLayout.WEST, namepan);
-        for (int i = 0; i<4; i++) {
+        for (int i = 0; i<spinst.length; i++) {
             Label key = new Label();
             key.setFont(sett);
             key.setText(spinst[i]);
@@ -102,7 +130,7 @@ public class midi {
         JPanel chbpan = new JPanel(new GridLayout(4,16));
         chbpan.setBackground(Color.black);
         JCheckBox key2;
-        for (int i =0; i<64;i++) {   // make list
+        for (int i =0; i<(spinst.length*16);i++) {   // make list
            key2 = new JCheckBox();
            key2.setBackground(Color.blue);
            chblist.add(key2); 
@@ -114,7 +142,22 @@ public class midi {
         mframe.getContentPane().add(BorderLayout.CENTER, chbpan);
         makeseq();
         mframe.pack();
-            }
+        setupcon();
+        Thread t = new Thread(new potok());
+        t.start();
+     }
+
+// init connect
+private void setupcon () {
+    try{
+    sock = new Socket("192.168.61.214",4999);
+    InputStreamReader sreader = new InputStreamReader(sock.getInputStream());
+    reader = new BufferedReader(sreader);
+    writer = new PrintWriter(sock.getOutputStream());
+    System.out.println("connection is ok");
+    } catch (Exception ex) {ex.printStackTrace();}
+    }
+
         
 // inicializcia sintezatora
         public void makeseq() {
@@ -144,7 +187,7 @@ public class midi {
             try{
             seq.deleteTrack(track);
             track = seq.createTrack();
-            for (int i =0; i<4; i++) {
+            for (int i =0; i<spinst.length; i++) {
                 for (int j = 0; j<16;j++ ) {
                     JCheckBox keey = (JCheckBox) chblist.get(16*i+j);
                     if (keey.isSelected()) {
@@ -176,6 +219,17 @@ public class midi {
             player.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
             player.start();
             } catch(Exception ex){}
+        }
+
+// class butoutp
+        public class butout implements ActionListener {
+            public void actionPerformed(ActionEvent a) {
+                try {
+                writer.println(outtext.getText());
+                writer.flush();
+                } catch(Exception ex) {ex.printStackTrace();}
+                outtext.setText("");
+            }
         }
 
 // class bstart
@@ -272,5 +326,20 @@ public class midi {
                         key1.setSelected(false);
                     }
                 }
+            }
+
+//class dlia potoka
+            public class potok implements Runnable {
+                public void run() {
+                String message;
+                try {
+                    while (true){ 
+                        if ((message = reader.readLine()) != null) {
+                        System.out.println("read:" + message);
+                        inptex.append(message + "\n");
+                    }
+                } 
+                }catch(Exception ex) {}
+            }
             }
 }        
