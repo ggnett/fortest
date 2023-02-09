@@ -148,6 +148,7 @@ public class Calculator {
                 if (key4>1) {error = false;} // esli bol'she dvuh operaciy  v odnoy stroke
             }
         }
+        if (key4==0) {error = false;} //esli ne vvedeno znaka
         return otv;
     }
 
