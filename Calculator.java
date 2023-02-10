@@ -2,13 +2,13 @@ import java.util.* ;
 
 public class Calculator {
     boolean error = true;
+    String menu = "";
     public static void main(String [] args) {
         Calculator calc = new Calculator();
         calc.go();
     }
 
     public void go() {
-        String menu = "";
         while (menu.equals("end") != true) {
             int key = 0;
             System.out.println("Введите 2 числа для выполнения операции. \nДля выхода введите \' end \'");
@@ -123,6 +123,8 @@ public class Calculator {
                 }
             }
             } else { System.out.println("некорректный ввод \n");
+                System.out.println("Завершение работы...");
+                menu = "end";
                 error = true;} // esli est' i nums i words
         }
     }
@@ -145,10 +147,14 @@ public class Calculator {
             } else {
                 key2++;
                 if (znak.contains(i)) {key4++;}
-                if (key4>1) {error = false;} // esli bol'she dvuh operaciy  v odnoy stroke
+                if (key4>1) {error = false;
+                    System.out.println("Завершение работы...");
+                    menu = "end";} // esli bol'she dvuh operaciy  v odnoy stroke
             }
         }
-        if (key4==0) {error = false;} //esli ne vvedeno znaka
+        if (key4==0) {error = false;
+            System.out.println("Завершение работы...");
+            menu = "end";} //esli ne vvedeno znaka
         return otv;
     }
 
