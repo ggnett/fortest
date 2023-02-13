@@ -174,15 +174,16 @@ public class Calculator {
 
 //perevod iz rim v ar
     String repl2(Integer n) {
-        String [] bibl = {"nulla","I","II","III","IV","V","VI","VII","VIII","IX","X",
-        "XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX",
-        "XXI","XXII","XXIII","XXIV","XXV","XXVI","XXVII","XXVIII","XXIX","XXX",
-        "XLI","XLII","XLIII","XLIV","XLV","XLVI","XLVII","XLVIII","XLIX","XLX",
-        "LI","LII","LIII","LIV","LV","LVI","LVII","LVIII","LIX","LX",
-        "LXI","LXII","LXIII","LXIV","LXV","LXVI","LXVII","LXVIII","LXIX","LXX",
-        "LXXI","LXXII","LXXIII","LXXIV","LXXV","LXXVI","LXXVII","LXXVIII","LXXIX","LXXX",
-        "LXXXI","LXXXII","LXXXIII","LXXXIV","LXXXV","LXXXVI","LXXXVII","LXXXVIII","LXXXIX","XC",
-        "XCI","XCII","XCIII","XCIV","XCV","XCVI","XCVII","XCVIII","XCIX","C"};
+        String [] bibl = {"nulla","I","II","III","IV","V","VI","VII","VIII","IX","X", //1-10
+        "XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX",                 //11-20
+        "XXI","XXII","XXIII","XXIV","XXV","XXVI","XXVII","XXVIII","XXIX","XXX",       //21-30
+        "XXXi","XXXII","XXXIII","XXXIV","XXXV","XXXVI","XXXVII","XXXVIII","XXXIX","XL",//31-40
+        "XLI","XLII","XLIII","XLIV","XLV","XLVI","XLVII","XLVIII","XLIX","L",       //41-50
+        "LI","LII","LIII","LIV","LV","LVI","LVII","LVIII","LIX","LX",                 //51-60
+        "LXI","LXII","LXIII","LXIV","LXV","LXVI","LXVII","LXVIII","LXIX","LXX",       //61-70
+        "LXXI","LXXII","LXXIII","LXXIV","LXXV","LXXVI","LXXVII","LXXVIII","LXXIX","LXXX",//71-80
+        "LXXXI","LXXXII","LXXXIII","LXXXIV","LXXXV","LXXXVI","LXXXVII","LXXXVIII","LXXXIX","XC",//81-90
+        "XCI","XCII","XCIII","XCIV","XCV","XCVI","XCVII","XCVIII","XCIX","C"}; //91-100
         String otv = bibl[n];
         return otv;
     };
